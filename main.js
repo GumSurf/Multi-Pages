@@ -1,3 +1,5 @@
+import { initializeWindowManager } from './window_manager.js';
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -16,10 +18,19 @@ function handleWindowResize() {
     camera.updateProjectionMatrix();
     
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const windowData = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+    };
+
+    localStorage.setItem('windowData', JSON.stringify(windowData));
 }
 window.addEventListener('resize', handleWindowResize);
 
 handleWindowResize();
+
+initializeWindowManager(camera, renderer);
 
 function animate() {
     requestAnimationFrame(animate);
