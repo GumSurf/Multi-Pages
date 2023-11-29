@@ -20,3 +20,5 @@ function renderScene() {
 function resize() {
 
 }
+
+init();
