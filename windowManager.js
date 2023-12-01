@@ -1,41 +1,57 @@
 const actWindow = {
-    id: null,
-    dimension: {
-        x: 0,
-        y: 0,
-    },
+        id: 0,
+        dimension: {
+            x: 0,
+            y: 0,
+        },
     nbCubes: 0,
-    firstWindow: false,
 }
 
-export function init() {
-    const value = verifyNewWindow();
+window.addEventListener('beforeunload', function (e) 
+{
+    const storedWindows = getStoredWindows() || [];
+    console.log("storedWindows =", storedWindows);
+    console.log("actWindows =", actWindow);
+    console.log("actWindow.id =", actWindow.id);
 
-    if(value == true) {
-        calculDimension();
-        pushWindow();
-    }
+    const windowIndex = storedWindows.findIndex(storedWindow => storedWindow.id === actWindow.id);
+    storedWindows.splice(windowIndex, 1);
+    console.log("storedWindows after =", storedWindows);
+    const tabStoredWindows = JSON.stringify(storedWindows);
+    localStorage.setItem("windows", tabStoredWindows);
+});
+
+export function init() {
+    createNewWindow();
+    calculDimension();
+    pushWindow();
     console.log("init windowManager.js");
 }
 
-function getStoredWindows() {
-    const storedWindows = localStorage.getItem("windows");
+export function getStoredWindows() {
+    const temp = localStorage.getItem("windows");
+    const storedWindows = JSON.parse(temp);
     return storedWindows;
 }
 
-function verifyNewWindow() {
-    const storedWindows = getStoredWindows();
+function createNewWindow() {
+    const storedWindows = getStoredWindows() || [];
+    console.log("storedWindows =", storedWindows);
+    console.log("actWindows =", actWindow);
+    let count = localStorage.getItem("count") || 0;
+    count++;
 
     if (!actWindow.id && storedWindows && storedWindows.length > 0) {
-        const windows = JSON.parse(storedWindows);
-        actWindow.id = windows.length + 1;
-        actWindow.nbCubes = windows.length + 1;
+        actWindow.id = count;
+        actWindow.nbCubes = storedWindows.length + 1;
+        console.log("nombres de windows actuelle = ", storedWindows.length);
+        localStorage.setItem("count", count);
         return true;
     } else if (!actWindow.id) {
-        actWindow.id = 1;
-        actWindow.firstWindow = true;
+        actWindow.id = count;
         actWindow.nbCubes++;
         console.log("Première window");
+        localStorage.setItem("count", count);
         return true;
     } else {
         return false;
@@ -54,7 +70,7 @@ function pushWindow() {
     let tabWindows = [];
 
     if (storedWindows) {
-        tabWindows = JSON.parse(storedWindows);
+        tabWindows = storedWindows;
     }
 
     tabWindows.push(actWindow);
