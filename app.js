@@ -29,6 +29,13 @@ function setupWindowManager() {
 
 function createCube() {
     const storedWindows = functions.getStoredWindows();
+
+    cubes.forEach((c) => {
+        scene.remove(c);
+    })
+
+    cubes = [];
+
     console.log("for storedWindows.length = ", storedWindows.length);
     for (let index = 1; index < storedWindows.length + 1; index++) {
         console.log("for windows.length = ", storedWindows.length);
