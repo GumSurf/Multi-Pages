@@ -1,3 +1,5 @@
+import { createCube } from "./app.js";
+
 const actWindow = {
         id: 0,
         dimension: {
@@ -7,9 +9,23 @@ const actWindow = {
     nbCubes: 0,
 }
 
+addEventListener("storage", (event) => 
+{
+    if (event.key == "windows")
+    {
+        let newWindows = JSON.parse(event.newValue);
+        console.log("newWindows =", newWindows);
+        console.log("newWindows.length =", newWindows.length);
+        console.log("actWindow.id =", actWindow.id);
+        if(newWindows.length > actWindow.id) {
+            createCube();
+        }
+    }
+});
+
 window.addEventListener('beforeunload', function (e) 
 {
-    const storedWindows = getStoredWindows() || [];
+    const storedWindows = getStoredWindows();
     console.log("storedWindows =", storedWindows);
     console.log("actWindows =", actWindow);
     console.log("actWindow.id =", actWindow.id);
