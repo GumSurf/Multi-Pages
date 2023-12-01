@@ -1,7 +1,8 @@
 import * as functions from './windowManager.js';
 import './window_manager.js';
 
-let scene, camera, renderer, cube = [];
+let scene, camera, renderer, cubes = [];
+let today = new Date();
 
 function init() {
     createScene();
@@ -27,7 +28,18 @@ function setupWindowManager() {
 }
 
 function createCube() {
-    
+    const storedWindows = functions.getStoredWindows();
+    console.log("for storedWindows.length = ", storedWindows.length);
+    for (let index = 1; index < storedWindows.length + 1; index++) {
+        console.log("for windows.length = ", storedWindows.length);
+        let c = new THREE.Color();
+        c.setHSL(index * .1, 1.0, .5);
+
+        let size = index;
+        let cube = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), new THREE.MeshBasicMaterial({ color: c, wireframe: true }));
+        cubes.push(cube);
+        scene.add(cube);
+    }
 }
 
 function renderScene() {
@@ -35,26 +47,24 @@ function renderScene() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-
-    // Création d'un cube avec une géométrie et un matériau
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Couleur verte
-    cube = new THREE.Mesh(geometry, material);
-
-    // Ajout du cube à la scène
-    scene.add(cube);
 }
 
 function resize() {
 
 }
 
+function getTime() {
+    return (new Date().getTime() - today) / 1000.0;
+}
+
 function animate() {
     requestAnimationFrame(animate);
+    let time = getTime();
 
-    // Rotation du cube sur les axes x et y
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    cubes.forEach(cube => {
+        cube.rotation.x = time * 0.5;
+        cube.rotation.y = time * 0.3;
+    });
 
     // Rendu de la scène avec la caméra
     renderer.render(scene, camera);
