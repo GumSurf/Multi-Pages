@@ -71,3 +71,5 @@ function animate() {
 }
 
 init();
+
+export { createCube };
