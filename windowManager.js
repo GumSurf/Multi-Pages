@@ -1,13 +1,17 @@
 import { createCube } from "./app.js";
 
-const actWindow = {
+const actWindow = [
+    {
         id: 0,
         dimension: {
             x: 0,
             y: 0,
         },
     nbCubes: 0,
-}
+    }
+];
+
+let idWindow = 0;
 
 addEventListener("storage", (event) => 
 {
@@ -16,8 +20,8 @@ addEventListener("storage", (event) =>
         let newWindows = JSON.parse(event.newValue);
         console.log("newWindows =", newWindows);
         console.log("newWindows.length =", newWindows.length);
-        console.log("actWindow.id =", actWindow.id);
-        if(newWindows.length > actWindow.id) {
+        console.log("actWindow.id =", actWindow[0].id);
+        if(newWindows.length > actWindow.length) {
             createCube();
         }
     }
@@ -28,13 +32,21 @@ window.addEventListener('beforeunload', function (e)
     const storedWindows = getStoredWindows();
     console.log("storedWindows =", storedWindows);
     console.log("actWindows =", actWindow);
-    console.log("actWindow.id =", actWindow.id);
+    console.log("actWindow.id =", actWindow[0].id);
+
+    let index = -1;
+
+    for (let i = 0; i < storedWindows.length; i++)
+    {
+        if (storedWindows[i].id == idWindow) index = i;
+    }
 
     const windowIndex = storedWindows.findIndex(storedWindow => storedWindow.id === actWindow.id);
-    storedWindows.splice(windowIndex, 1);
+    storedWindows.splice(index, 1);
     console.log("storedWindows after =", storedWindows);
     const tabStoredWindows = JSON.stringify(storedWindows);
     localStorage.setItem("windows", tabStoredWindows);
+    createCube();
 });
 
 export function init() {
@@ -57,15 +69,17 @@ function createNewWindow() {
     let count = localStorage.getItem("count") || 0;
     count++;
 
-    if (!actWindow.id && storedWindows && storedWindows.length > 0) {
-        actWindow.id = count;
-        actWindow.nbCubes = storedWindows.length + 1;
+    if (!actWindow[0].id && storedWindows && storedWindows.length > 0) {
+        actWindow[0].id = count;
+        idWindow = count;
+        actWindow[0].nbCubes = storedWindows.length + 1;
         console.log("nombres de windows actuelle = ", storedWindows.length);
         localStorage.setItem("count", count);
         return true;
-    } else if (!actWindow.id) {
-        actWindow.id = count;
-        actWindow.nbCubes++;
+    } else if (!actWindow[0].id) {
+        actWindow[0].id = count;
+        idWindow = count;
+        actWindow[0].nbCubes++;
         console.log("Première window");
         localStorage.setItem("count", count);
         return true;
@@ -75,8 +89,8 @@ function createNewWindow() {
 }
 
 function calculDimension() {
-    actWindow.dimension.x = window.screen.width;
-    actWindow.dimension.y = window.screen.height;
+    actWindow[0].dimension.x = window.screen.width;
+    actWindow[0].dimension.y = window.screen.height;
 }
 
 function pushWindow() {
