@@ -75,6 +75,16 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+// Fonction de mise à jour de la taille du rendu lorsque la fenêtre est redimensionnée
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  
+  // Écouteur d'événement pour la redimensionnement de la fenêtre
+  window.addEventListener('resize', onWindowResize);
+
 init();
 
 export { createCube };
