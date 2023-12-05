@@ -36,9 +36,7 @@ function createCube() {
 
     cubes = [];
 
-    console.log("for storedWindows.length = ", storedWindows.length);
     for (let index = 1; index < storedWindows.length + 1; index++) {
-        console.log("for windows.length = ", storedWindows.length);
         let c = new THREE.Color();
         c.setHSL(index * .1, 1.0, .5);
 
