@@ -1,5 +1,4 @@
 import * as functions from './windowManager.js';
-import './window_manager.js';
 
 let scene, camera, renderer, cubes = [], world;
 let pixR = window.devicePixelRatio ? window.devicePixelRatio : 1;
