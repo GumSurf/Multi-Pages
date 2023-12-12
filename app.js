@@ -87,7 +87,6 @@ function renderScene() {
     sceneOffset.x = sceneOffset.x + ((sceneOffsetTarget.x - sceneOffset.x) * falloff);
     sceneOffset.y = sceneOffset.y + ((sceneOffsetTarget.y - sceneOffset.y) * falloff);
 
-    console.log("sceneOffset.x =", sceneOffset.x);
     world.position.x = sceneOffset.x;
     world.position.y = sceneOffset.y;
 
@@ -109,14 +108,12 @@ function renderScene() {
 export function updateWindowShape(easing = true) {
     sceneOffsetTarget = { x: -window.screenX, y: -window.screenY };
     if (!easing) sceneOffset = sceneOffsetTarget;
-    console.log("offsettarget =", sceneOffsetTarget);
 }
 
 function resize() {
     camera = new THREE.OrthographicCamera(0, window.innerWidth, 0, window.innerHeight, -10000, 10000);
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    console.log("RESIZE !!!");
 }
 
 function getTime() {
