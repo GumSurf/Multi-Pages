@@ -1,37 +1,24 @@
-import { createCube } from "./app.js";
+import { createCube, updateWindowShape } from "./app.js";
 
-const actWindow = [
-    {
-        id: 0,
-        dimension: {
-            x: 0,
-            y: 0,
-        },
-    nbCubes: 0,
-    }
-];
+const actWindow = [];
 
 let idWindow = 0;
 
-addEventListener("storage", (event) => 
-{
-    if (event.key == "windows")
-    {
+addEventListener("storage", (event) => {
+    if (event.key == "windows") {
         let newWindows = JSON.parse(event.newValue);
-        if(newWindows.length > actWindow.length || newWindows.length < actWindow.length || newWindows.length == actWindow.length) {
+        if (newWindows.length > actWindow.length || newWindows.length < actWindow.length || newWindows.length == actWindow.length) {
             createCube();
         }
     }
 });
 
-window.addEventListener('beforeunload', function (e) 
-{
+window.addEventListener('beforeunload', function (e) {
     const storedWindows = getStoredWindows();
 
     let index = -1;
 
-    for (let i = 0; i < storedWindows.length; i++)
-    {
+    for (let i = 0; i < storedWindows.length; i++) {
         if (storedWindows[i].id == idWindow) index = i;
     }
 
@@ -43,9 +30,18 @@ window.addEventListener('beforeunload', function (e)
 });
 
 export function init() {
-    createNewWindow();
-    calculDimension();
-    pushWindow();
+    const storedWindows = getStoredWindows() || [];
+    console.log("storedWindows =", storedWindows);
+    let count = localStorage.getItem("count") || 0;
+    count++;
+    idWindow = count;
+    let id = count;
+    let shape = calculDimension();
+    const winData = { id: id, shape: shape };
+    actWindow.push(winData);
+    storedWindows.push(winData);
+    localStorage.setItem("count", count);
+    pushWindow(storedWindows);
 }
 
 export function getStoredWindows() {
@@ -77,20 +73,41 @@ function createNewWindow() {
 }
 
 function calculDimension() {
-    actWindow[0].dimension.x = window.screen.width;
-    actWindow[0].dimension.y = window.screen.height;
+    let shape = { x: window.screenLeft, y: window.screenTop, w: window.innerWidth, h: window.innerHeight };
+    return shape;
 }
 
-function pushWindow() {
-    const storedWindows = getStoredWindows();
-    let tabWindows = [];
+function pushWindow(storedWindows) {
+    localStorage.setItem("windows", JSON.stringify(storedWindows));
+}
 
-    if (storedWindows) {
-        tabWindows = storedWindows;
+export function updateShape() {
+    let winShape = calculDimension();
+    let storedWindow = getStoredWindows();
+
+
+
+    if (winShape.x != actWindow[0].shape.x ||
+        winShape.y != actWindow[0].shape.y ||
+        winShape.w != actWindow[0].shape.w ||
+        winShape.h != actWindow[0].shape.h) {
+
+        actWindow[0].shape = winShape;
+
+        let index = -1;
+
+		for (let i = 0; i < storedWindow.length; i++)
+		{
+			if (storedWindow[i].id == idWindow) index = i;
+		}
+
+        storedWindow[index].shape.h = winShape.h;
+        storedWindow[index].shape.w = winShape.w;
+        storedWindow[index].shape.x = winShape.x;
+        storedWindow[index].shape.y = winShape.y;
+
+        updateWindowShape();
+
+        pushWindow(storedWindow)
     }
-
-    tabWindows.push(actWindow);
-
-    const tabWindowsString = JSON.stringify(tabWindows);
-    localStorage.setItem("windows", tabWindowsString);
 }
