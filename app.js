@@ -59,7 +59,7 @@ function createCube() {
     for (let index = 0; index < storedWindows.length; index++) {
         let win = storedWindows[index];
         let c = new THREE.Color();
-        c.setHSL(index * .1, 1.0, .5);
+        c.setHSL(index * .2, 1.0, .5);
 
         let size = 100 + index * 50;
         let cube = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), new THREE.MeshBasicMaterial({ color: c, wireframe: true }));
